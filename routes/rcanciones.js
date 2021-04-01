@@ -24,7 +24,7 @@ module.exports = function(app, swig) {
     });
 
     app.post("/cancion", function(req, res) {
-        res.send("CAncion agregada: " + req.body.nombre + "<br>"
+        res.send("Cancion agregada: " + req.body.nombre + "<br>"
         + "genero: " + req.body.genero + "<br>"
         + "precio: " + req.body.precio);
     });
