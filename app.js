@@ -10,7 +10,6 @@ app.use(expressSession({
 }));
 
 let crypto = require('crypto');
-
 let fileUpload = require('express-fileupload');
 app.use(fileUpload());
 
@@ -39,6 +38,30 @@ routerUsuarioSession.use(function(req, res, next) {
 //Aplicar routerUsuarioSession
 app.use("/canciones/agregar",routerUsuarioSession);
 app.use("/publicaciones",routerUsuarioSession);
+
+//routerUsuarioAutor
+let routerUsuarioAutor = express.Router();
+routerUsuarioAutor.use(function(req, res, next) {
+    console.log("routerUsuarioAutor");
+    let path = require('path');
+    let id = path.basename(req.originalUrl);
+// Cuidado porque req.params no funciona
+// en el router si los params van en la URL.
+    gestorBD.obtenerCanciones(
+        {_id: mongo.ObjectID(id) }, function (canciones) {
+            console.log(canciones[0]);
+            if(canciones[0].autor == req.session.usuario ){
+                next();
+            } else {
+                res.redirect("/tienda");
+            }
+        })
+});
+//Aplicar routerUsuarioAutor
+app.use("/cancion/modificar",routerUsuarioAutor);
+app.use("/cancion/eliminar",routerUsuarioAutor);
+
+
 //routerAudios
 let routerAudios = express.Router();
 routerAudios.use(function(req, res, next) {
@@ -61,10 +84,12 @@ app.use("/audios/",routerAudios);
 app.use(express.static('public'));
 
 // Variables
-app.set('port', 8081);
-app.set('db', 'mongodb://admin:sdi@tiendamusica-shard-00-00.uvesu.mongodb.net:27017,tiendamusica-shard-00-01.uvesu.mongodb.net:27017,tiendamusica-shard-00-02.uvesu.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-k8ns60-shard-0&authSource=admin&retryWrites=true&w=majority');
+
 app.set('clave','abcdefg');
 app.set('crypto',crypto);
+app.set('port', 8081);
+app.set('db', 'mongodb://admin:sdi@tiendamusica-shard-00-00.uvesu.mongodb.net:27017,tiendamusica-shard-00-01.uvesu.mongodb.net:27017,tiendamusica-shard-00-02.uvesu.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-k8ns60-shard-0&authSource=admin&retryWrites=true&w=majority');
+
 
 //Rutas/controladores por lógica
 require("./routes/rusuarios.js")(app, swig, gestorBD); // (app, param1, param2, etc.)
