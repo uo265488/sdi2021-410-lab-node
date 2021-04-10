@@ -8,5 +8,8 @@
     "express-fileupload": "^1.2.1",
     "mongodb": "^2.2.33",
     "swig": "^1.4.2"
+  },
+  "devDependencies": {
+    "express-session": "^1.17.1"
   }
 }
